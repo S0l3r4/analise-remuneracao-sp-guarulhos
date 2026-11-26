@@ -2,7 +2,7 @@
 
 Projeto em grupo da disciplina CE242 – Métodos de Análise Econômica II (Unicamp, 2026).
 
-## Pergunta analítica
+## Pergunta análitica
 Entre trabalhadores formais com jornada contratual de 44 horas semanais ou mais, como a remuneração varia por raça/cor e nível de escolaridade em São Paulo e Guarulhos?
 
 ## Dados
@@ -20,7 +20,7 @@ A diferença de remuneração entre negros e brancos é pequena entre quem tem a
 ## Relatório completo
 [Acesse o relatório](COLE-AQUI-O-LINK-DO-GITHUB-PAGES)
 
-## Minha contribuição
+## Minha contribuições
 Filtragem e manipulação da base de dados, definição das variáveis e dos critérios de análise e programação dos gráficos.
 
 ## Autores
