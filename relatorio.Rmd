@@ -37,12 +37,12 @@ library(knitr)
 
 **Turma:** C  **Grupo:** 7
 
-| Integrante | RA |
-|------------|----|
-| Amanda Froes Gozzo de Oliveira | 307014 |
-| Guilherme Ferreira de Ornelas Freitas | 307057 |
-| Rebecca de Melo Jose Joaquim | 315807 |
-| Thomas Solera Damasena | 307123 |
+| Integrante |
+|------------|
+| Amanda Froes Gozzo de Oliveira |
+| Guilherme Ferreira de Ornelas Freitas |
+| Rebecca de Melo Jose Joaquim |
+| Thomas Solera Damasena |
 
 # Eixo Programático e Pergunta Analítica
 
