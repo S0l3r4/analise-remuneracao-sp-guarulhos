@@ -20,7 +20,7 @@ A diferença de remuneração entre negros e brancos é pequena entre quem tem a
 ## Relatório completo
 [Acesse o relatório](COLE-AQUI-O-LINK-DO-GITHUB-PAGES)
 
-## Minha contribuições
+## Minhas contribuições
 Filtragem e manipulação da base de dados, definição das variáveis e dos critérios de análise e programação dos gráficos.
 
 ## Autores
