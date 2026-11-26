@@ -1,0 +1,105 @@
+RELATORIO DE FILTRAGEM - RAIS 2025
+Pesquisa: jornada de trabalho, raca/cor e escolaridade no emprego formal
+Recorte: Sao Paulo e Guarulhos
+
+1. ARQUIVO E PROCEDIMENTO
+Arquivo original: ./RAIS_VINC_PUB_SP.COMT
+Variavel municipal: Município - Código
+Codigos municipais: 355030, 351880
+
+2. FILTROS INICIAIS
+Registros lidos: 25.497.764
+Registros dos municipios selecionados: 9.414.844
+Vinculos ativos em 31/12: 5.965.279
+Jornada ausente/nao numerica: 0
+Jornada abaixo de 44 horas (exceto codigo 99): 2.228.697
+Jornada codigo 99 (tratada como ignorada/invalida): 232.337
+Jornada mantida (>= 44 e diferente de 99): 3.504.245
+
+3. BASE APOS OS FILTROS INICIAIS
+Vinculos: 3.504.245
+
+4. QUALIDADE DOS DADOS
+
+Distribuicao dos codigos de raca/cor:
+   Raça Cor - Código       N
+1:                 1    7658
+2:                 2 1604670
+3:                 4  320727
+4:                 6   40313
+5:                 8 1470569
+6:                 9   60308
+
+Distribuicao dos codigos de escolaridade:
+    Escolaridade Após 2005 - Código       N
+ 1:                               1   13331
+ 2:                              10    7911
+ 3:                              11    3007
+ 4:                               2   56465
+ 5:                               3   45844
+ 6:                               4  119046
+ 7:                               5  241433
+ 8:                               6  186569
+ 9:                               7 2006274
+10:                               8  102643
+11:                               9  721722
+
+Distribuicao das jornadas mantidas:
+    horas       N
+ 1:    44 3446521
+ 2:    45   14413
+ 3:    46    2340
+ 4:    47    1735
+ 5:    48    8323
+ 6:    49    3337
+ 7:    50    2782
+ 8:    51   11803
+ 9:    52    1069
+10:    53     673
+11:    54     868
+12:    55    4779
+13:    56    3722
+14:    57     889
+15:    58     349
+16:    59     284
+17:    60     358
+
+Vinculos por municipio:
+   codigo_municipio       N municipio
+1:           355030 3191844 São Paulo
+2:           351880  312401 Guarulhos
+
+5. EXCLUSOES PARA A AMOSTRA COMPARATIVA
+Base antes das exclusoes: 3.504.245
+Excluidos por remuneracao ausente, zero ou negativa: 315.238
+Restantes: 3.189.007
+Excluidos por raca/cor fora dos grupos: 94.137
+Restantes: 3.094.870
+Excluidos por escolaridade fora dos grupos: 94.154
+AMOSTRA FINAL: 3.000.716
+
+6. DEFINICAO DOS GRUPOS
+Brancos: codigo 2. Negros: codigos 4 (pretos) e 8 (pardos).
+Ate ensino medio completo: codigos 1 a 7.
+Ensino superior completo: codigos 9 a 11.
+Superior incompleto (codigo 8) nao integra a comparacao.
+
+7. PROBLEMAS, DECISOES E LIMITACOES
+- O arquivo original e grande; por isso foi lido em blocos para
+  reduzir o uso de memoria, sem alterar os criterios de selecao.
+- A variavel municipal precisa ser confirmada no dicionario da RAIS
+  para garantir que representa o territorio definido na pesquisa.
+- O codigo 99 de jornada foi tratado como ignorado/invalido e excluido;
+  confirmar essa interpretacao no layout oficial.
+- Remuneracoes ausentes, iguais a zero ou negativas foram excluidas
+  da amostra comparativa, pois nao permitem calcular a remuneracao media
+  de forma consistente para o objetivo proposto.
+- Registros sem grupo comparavel de raca/cor ou escolaridade foram
+  excluidos apenas na construcao da amostra comparativa.
+- As exclusoes das etapas de remuneracao, raca/cor e escolaridade
+  sao sequenciais e, portanto, nao se sobrepoem nas contagens reportadas.
+- A analise e descritiva; diferencas observadas nao demonstram causalidade.
+
+8. ARQUIVOS GERADOS
+Base final: rais_sp_guarulhos_analise.csv
+Relatorio: relatorio_filtragem_rais.txt

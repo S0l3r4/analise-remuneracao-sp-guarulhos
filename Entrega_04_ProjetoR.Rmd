@@ -1,0 +1,621 @@
+---
+title: "CE242 - Jornada de trabalho, raça/cor e escolaridade no emprego formal: o
+  vetor São Paulo–Guarulhos"
+author: Amanda Froes Gozzo de Oliveira, Guilherme Ferreira de Ornelas Freitas, Rebecca
+  de Melo Jose Joaquim, Thomas Solera Damasena
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+    theme: readable
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+lang: "pt-BR"
+---
+
+```{r setup, include=FALSE}
+
+# Pacotes (Aulas 5 e 7: dplyr e ggplot2); tidyr e readr apoiam a leitura e a tabulação
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readr)
+library(knitr)
+
+```
+
+# Cabeçalho e Identificação
+
+**Disciplina:** CE242ABC – Métodos de Análise Econômica II (Prof. Ivette Luna) – 2º semestre de 2026
+
+**Turma:** C  **Grupo:** 7
+
+| Integrante | RA |
+|------------|----|
+| Amanda Froes Gozzo de Oliveira | 307014 |
+| Guilherme Ferreira de Ornelas Freitas | 307057 |
+| Rebecca de Melo Jose Joaquim | 315807 |
+| Thomas Solera Damasena | 307123 |
+
+# Eixo Programático e Pergunta Analítica
+
+## Proposta e eixo programático
+
+**Proposta de estudo:** desigualdades raciais e de escolaridade nas jornadas de trabalho do emprego formal no vetor São Paulo–Guarulhos: estudo comparativo de dois municípios da Região Metropolitana de São Paulo com estruturas produtivas distintas, que examina como raça/cor e escolaridade se cruzam na distribuição de jornadas de 44 horas semanais ou mais.
+
+**Eixos programáticos:**
+
+1. Igualdade salarial e combate à discriminação racial.
+2. Valorização do trabalho formal.
+
+**Propostas eleitorais de referência:**
+
+- **Base (Lula):** o plano de governo registrado no TSE prevê, no item 12 ("Valorizar o Trabalho em suas Múltiplas Formas"), assegurar o fim da escala 6x1 e a redução da jornada de trabalho para 40 horas, sem redução salarial (BRASIL, 2026). Na agenda de igualdade racial, o contexto federal é o Pacto pela Igualdade Racial (BRASIL, 2024).
+
+**Ponte analítica com a RAIS:** a base da RAIS permite identificar as horas contratuais semanais declaradas pelo estabelecimento. Ao filtrar trabalhadores submetidos à jornada contratual de 44 horas semanais ou mais, é possível mensurar a composição demográfica (raça/cor e escolaridade) dos trabalhadores que mais seriam impactados por essa alteração legislativa e analisar se a remuneração nessa faixa reflete assimetrias estruturais entre territórios metropolitanos com perfis produtivos distintos (São Paulo como polo de serviços de alto valor agregado e Guarulhos como polo industrial/logístico). A RAIS não permite avaliar o efeito de nenhuma proposta.
+
+## Pergunta analítica
+
+> Em que medida os trabalhadores formais submetidos à jornada de 44 horas semanais ou mais nos municípios de São Paulo e Guarulhos apresentam disparidades de remuneração por raça/cor e nível de instrução, e o que essa estrutura evidencia sobre os impactos distributivos da redução da jornada de trabalho no emprego formal metropolitano?
+
+## Recorte comparativo
+
+| Dimensão | Definição |
+|----------|-----------|
+| Fonte e ano | RAIS 2025 |
+| **Comparação principal** | Município de **São Paulo** (código IBGE 3550308; 355030 na RAIS) × município de **Guarulhos** (código IBGE 3518800; 351880 na RAIS) |
+| Filtro de jornada | Trabalhadores formais submetidos à jornada contratual de 44 horas semanais ou mais |
+| Recorte 1: raça/cor | Brancos × Negros (pretos e pardos) |
+| Recorte 2: nível de instrução | Fundamental/Médio completo × Superior completo |
+
+## Justificativa da relevância pública e econômica
+
+A pauta da jornada é central no debate eleitoral, entre a redução para 40 horas semanais sem corte salarial e a jornada flexível (BBC NEWS BRASIL, 2026). Como o limite constitucional até aqui era de 44 horas semanais (BRASIL, 1988), os vínculos nesse patamar são os que seriam diretamente alcançados por uma redução. Saber quem são esses trabalhadores, segundo raça/cor e escolaridade, ajuda a avaliar a quem as propostas se dirigem. O recorte racial se justifica porque as diferenças de rendimento entre brancos e negros no Brasil são documentadas pelo IBGE (2022).
+
+A comparação entre São Paulo e Guarulhos, municípios vizinhos da Região Metropolitana de São Paulo, permite observar dois perfis produtivos distintos. Segundo dados da Fundação SEADE (2022), o setor de serviços e comércio responde por 83,2% do Valor Adicionado Bruto de São Paulo e por 63,5% do de Guarulhos, enquanto a indústria responde por 9,5% e 27%, respectivamente. Essa diferença de estrutura pode se refletir na organização dos postos formais e na presença de jornadas de 44 horas, e a comparação permite investigar se a distribuição de trabalhadores negros e de menor escolaridade nas jornadas mais extensas varia conforme o perfil econômico de cada município.
+
+# Contextualização do Problema
+
+## Contexto e Problema de Pesquisa
+
+O objetivo desta etapa é analisar as disparidades de remuneração no mercado de trabalho metropolitano a partir de um estudo comparativo entre os municípios de São Paulo e Guarulhos. A proposta investiga se as assimetrias salariais na região acontecem apenas por diferenças no nível de escolaridade (capital humano) ou se persistem diferenças por raça/cor entre trabalhadores com o mesmo nível de instrução no emprego formal.
+
+Essa preocupação justifica-se analiticamente pelos dados do Instituto Brasileiro de Geografia e Estatística (IBGE, 2022), que demonstram como as disparidades raciais no rendimento e na qualidade da ocupação são estruturais no país: em média, o rendimento dos trabalhadores brancos (R$ 3.099) supera em 75,7% o de pretos (R$ 1.764) e em 70,8% o de pardos (R$ 1.814). Essa desvantagem racial persiste mesmo quando controlada pelo nível de escolaridade, atingindo inclusive profissionais com ensino superior completo, em que a média salarial de brancos é cerca de 50% superior à de pretos.
+
+Paralelamente a esse quadro de desigualdade, o debate político-econômico recente sobre o mercado de trabalho brasileiro colocou a duração da jornada semanal de trabalho no centro da disputa presidencial. Até aqui, o limite máximo constitucional era de 44 horas semanais (art. 7º, XIII, da CF/88) (BRASIL, 1988), de modo que os vínculos empregatícios pactuados nesse patamar ou acima dele representam a parcela da força de trabalho formal diretamente alcançada pela reestruturação do tempo de trabalho.
+
+Em um espaço metropolitano interligado, a comparação entre o polo corporativo de serviços avançados (São Paulo) e o polo industrial e logístico (Guarulhos) permite observar se a presença de jornadas longas e a remuneração por raça/cor e instrução diferem entre dois perfis produtivos. A investigação sobre quem são esses trabalhadores — considerando seu perfil etno-racial e nível de instrução em territórios com estruturas produtivas distintas (São Paulo e Guarulhos) — torna-se fundamental para mensurar os potenciais impactos distributivos e de equidade de uma mudança legislativa.
+
+# Dados, Variáveis e Decisões Analíticas
+
+## População e Filtros
+
+- **Universo:** trabalhadores com vínculo formal ativo em 31/12/2025 alocados nos estabelecimentos dos municípios de São Paulo (3550308) e Guarulhos (3518800). O município é o do estabelecimento (variável `Município - Código`, definida no layout da RAIS como o "município de localização do estabelecimento").
+- **Proxy de Jornada (Escala 6x1):** seleção dos vínculos com jornada contratual de 44 horas semanais ou superior (`Qtd Hora Contr >= 44`). A jornada contratual é uma aproximação de quem seria alcançado pela redução e não identifica a escala (ver seção 8). O código 99, que não corresponde a uma jornada semanal plausível, foi tratado como jornada não mensurável e excluído, medida contextualizada no Apêndice A.4.
+- **Tratamento de Dados Ausentes e Inconsistentes:** exclusão de registros com remuneração média igual a zero (`Vl Rem Média Nom = 0`), bem como de observações com raça/cor fora dos grupos brancos e negros ou escolaridade fora dos grupos comparados. As contagens de cada etapa, as proporções excluídas e o perfil dos excluídos estão no Apêndice A.
+
+## Tabela das Variáveis
+
+| Categoria | Variável na RAIS | Agrupamento ou uso |
+|-----------|------------------|--------------------|
+| Localização | `Município - Código` (município do estabelecimento) | São Paulo (355030) vs. Guarulhos (351880) |
+| Vínculo | `Ind Vínculo Ativo 31/12 - Código` | Somente vínculos ativos (código 1) |
+| Jornada | `Qtd Hora Contr` (horas contratuais por semana) | 44 horas ou mais, exceto o código 99 |
+| Raça/cor | `Raça Cor - Código` | Brancos (2) vs. Negros (pretos, 4, e pardos, 8) |
+| Escolaridade | `Escolaridade Após 2005 - Código` | Até ensino médio completo (1 a 7) vs. Superior completo (9 a 11) |
+
+**Justificativa para a exclusão do código 8 na escolaridade:** o código 8 corresponde ao ensino superior incompleto. Ele foi excluído porque a comparação foi definida entre dois grupos: até o ensino médio completo (códigos 1 a 7) e ensino superior completo (códigos 9 a 11). Incluir o código 8 exigiria criar um terceiro grupo ou juntá-lo a uma categoria que não representa sua escolaridade. Essa exclusão vale apenas para a variável escolaridade. Na variável raça/cor, o código 8 representa pessoas pardas e foi incluído no grupo de negros.
+| Rendimento | `Vl Rem Média (SM)` e `Vl Rem Média Nom` | Remuneração média do ano, em salários mínimos (usada na análise) e em R$ nominais |
+
+## Base preparada e validação
+
+A base analítica (`rais_sp_guarulhos_analise.csv`) foi gerada pelo script de filtragem a partir do arquivo do estado de São Paulo da RAIS 2025. O bloco abaixo lê a base e confere seus principais atributos.
+
+```{r leitura-base}
+# Caminho da base analítica (mesma pasta deste arquivo)
+arquivo_base <- "rais_sp_guarulhos_analise.csv"
+stopifnot("Arquivo da base não encontrado: confira o caminho em arquivo_base" =
+            file.exists(arquivo_base))
+
+# Lê só as colunas necessárias (a base tem cerca de 3 milhões de linhas e isso pode acabar dificultando nosso trabalho, então só carregamos aquilo que é necessário para o projeto)
+base <- read_csv(
+  arquivo_base,
+  col_select = c("Município - Código", "horas", "rem_reais", "rem_sm","grupo_raca", "grupo_escolaridade"), show_col_types = FALSE
+) |>
+# colocamos um rename no nomes das colunas pra facilitar nos outros códigos, visto que, por exemplo, Municipio Codigo tem acentos e espaços.
+  rename(cod_mun      = `Município - Código`,
+         raca         = grupo_raca,
+         escolaridade = grupo_escolaridade) |>
+# colocamos um mutate para tranformar os nomes do municipio para trabalhar melhor com os dados, facilitando a construção das tabelas, graficos e as suas comparações.
+  mutate(
+    municipio = case_when(
+      cod_mun == 355030 ~ "São Paulo",
+      cod_mun == 351880 ~ "Guarulhos"
+    ),
+# estamos transformando variaveis numericas em categoricas, para representar nossos recorte e grupo (pois são diferentes de variveis numéricas como salário e jornada)
+    municipio    = factor(municipio, levels = c("São Paulo", "Guarulhos")),
+    raca         = factor(raca, levels = c("Brancos", "Negros")),
+    escolaridade = factor(escolaridade,
+                          levels = c("Até ensino médio completo",
+                                     "Ensino superior completo"))
+  )
+# ao longo desse processo utilizamos o pipe para encadear as etapas sem a necessidade de criar vários objetos.
+```
+
+```{r validacao}
+# Aqui nós decidimos por demonstrar e validar todos os dados e resultados que temos na nossa base através de uma tabela descritiva, para deixar claro a quantidade de dados em todas as nossas variáveis de análise.
+validacao <- tibble(
+  
+#primeira coluna com as descrições de verificação
+  verificacao = c(
+    "Vínculos na base",
+    "Vínculos em São Paulo",
+    "Vínculos em Guarulhos",
+    "Jornada mínima (horas semanais)",
+    "Jornada máxima (horas semanais)",
+    "Menor remuneração média (salários mínimos)"
+  ),
+
+#segunda coluna com os valores verificados, principalmente de jornada e menor remunaração média (pontos de atenção durante a limpeza da base)
+  resultado = c(
+    format(nrow(base), big.mark = ".", decimal.mark = ","),
+    format(sum(base$municipio == "São Paulo"), big.mark = ".", decimal.mark = ","),
+    format(sum(base$municipio == "Guarulhos"), big.mark = ".", decimal.mark = ","),
+    as.character(min(base$horas)),
+    as.character(max(base$horas)),
+    format(round(min(base$rem_sm), 2), decimal.mark = ",")
+  )
+)
+
+#tranforma a tabela de dados em uma tabela formatada mais apresentável no R markdown
+kable(validacao, col.names = c("Verificação", "Resultado"), align = c("l", "r"),
+      caption = "Tabela 1 – Validação da base analítica. Fonte: RAIS 2025 (MTE). Elaboração própria.")
+```
+
+# Indicadores Econômicos
+
+**Medidas de Posição e Dispersão:** cálculo da média, mediana, quartis (P25, P50, P75) e desvio-padrão da remuneração média anual em salários mínimos para cada subgrupo cruzado.
+
+**Métricas de Disparidade Racial:** razão entre a remuneração mediana de trabalhadores negros e brancos com o mesmo nível de escolaridade.
+
+**Indicadores de Desigualdade:**
+
+- **Curva de Lorenz:** gráfico da distribuição acumulada da massa de rendimentos nos dois municípios.
+- **Índice de Gini:** cálculo do coeficiente de Gini da remuneração média anual em salários mínimos por município e pelos grupos de raça/cor e escolaridade na faixa de 44h.
+
+**Medida utilizada:** a remuneração analisada é a média do ano em salários mínimos (`Vl Rem Média (SM)`). Além das medidas de posição e dispersão e da razão entre medianas, nesta etapa também são calculadas a Curva de Lorenz e o Índice de Gini.
+
+# Análise Exploratória
+
+A análise descreve os vínculos formais com jornada contratual de 44 horas ou mais (sem o código 99) e remuneração média positiva, em São Paulo e Guarulhos, segundo raça/cor e escolaridade. A remuneração é a média do ano, em salários mínimos (SM).
+
+## Composição dos vínculos
+
+```{r composicao}
+# Tabela descritiva de como os vínculos estão distribuídos entre os grupos de raça/cor dentro de cada nível de escolaridade, separando São Paulo e Guarulhos
+composicao <- base |>
+  
+#Conta quantos vínculos existem em cada combinação de município, escolaridade e raça/cor.
+  count(municipio, escolaridade, raca) |>
+  
+#Aqui a gente separa por município e escolaridade e calcula a porcentagem alocando na coluna nova perc_no_nivel
+  group_by(municipio, escolaridade) |>
+  mutate(perc_no_nivel = 100 * n / sum(n)) |>
+  ungroup()
+
+kable(
+  composicao,
+  col.names = c("Município", "Escolaridade", "Raça/cor", "Vínculos",
+                "% do nível de escolaridade"),
+  digits = c(0, 0, 0, 0, 1),
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("l", "l", "l", "r", "r"),
+  caption = "Tabela 2 – Composição dos vínculos por município, escolaridade e raça/cor. Fonte: RAIS 2025 (MTE). Elaboração própria."
+)
+```
+
+Nos dois municípios, a maior parte dos vínculos de até ensino médio completo é de pessoas negras (58,1% em São Paulo e 57,7% em Guarulhos). Entre os vínculos de superior completo, a participação de negros é menor: 35,4% em São Paulo e 43,5% em Guarulhos. O superior completo responde por cerca de 23,3% dos vínculos da amostra em São Paulo e por 15,1% em Guarulhos.
+
+## Medidas de posição e dispersão
+
+```{r tabela-descritiva}
+#Tabela de estatísticas descritivas da remuneração. Comparando a remuneração de pessoas brancas e negras, considerando escolaridade e município.
+
+tabela_desc <- base |>
+  
+#novamente separando por grupos, realizando as combinações necessárias
+  group_by(municipio, escolaridade, raca) |>
+
+# calculo das estatísticas
+  summarise(
+    n       = n(), #qntd vinculos
+    media   = mean(rem_sm), #media da remuneração
+    dp      = sd(rem_sm), #desvio-padrão da remuneração
+    mediana = median(rem_sm), #mediana da remuneração
+    p25     = quantile(rem_sm, 0.25),
+    p75     = quantile(rem_sm, 0.75),
+    .groups = "drop"
+  ) |>
+  arrange(municipio, escolaridade, raca)
+
+kable(
+  tabela_desc,
+  col.names = c("Município", "Escolaridade", "Raça/cor", "Vínculos",
+                "Média", "Desvio-padrão", "Mediana", "P25", "P75"),
+  digits = c(0, 0, 0, 0, 2, 2, 2, 2, 2),
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("l", "l", "l", "r", "r", "r", "r", "r", "r"),
+  caption = "Tabela 3 – Estatísticas descritivas da remuneração por município, escolaridade e raça/cor. Fonte: RAIS 2025 (MTE). Elaboração própria."
+)
+```
+
+No grupo de até ensino médio completo, a mediana é próxima entre brancos e negros: 1,62 e 1,53 SM em São Paulo, e 1,71 e 1,64 SM em Guarulhos. No ensino superior completo, a diferença é maior: 4,20 e 3,01 SM em São Paulo, e 2,89 e 2,51 SM em Guarulhos. Em todos os grupos, a média é maior que a mediana, e essa diferença é expressiva no ensino superior completo (em São Paulo, 6,76 SM de média contra 4,20 SM de mediana entre brancos). Esse comportamento sugere assimetria à direita na distribuição, indicando a presença de vínculos com remunerações muito elevadas. Por isso, a mediana também é utilizada nas comparações, pois é menos influenciada por valores extremos. A dispersão das remunerações também é maior nos grupos com ensino superior completo, especialmente entre os trabalhadores brancos de São Paulo, cujo desvio-padrão chega a 8,28 SM.
+
+## Razão entre medianas por raça/cor
+
+```{r razao}
+# Comparação dentro do mesmo nível de escolaridade
+razao_nivel <- tabela_desc |>
+  select(municipio, escolaridade, raca, mediana) |>
+  pivot_wider(names_from = raca, values_from = mediana) |>
+  mutate(escolaridade = as.character(escolaridade))
+
+# Todos os níveis juntos (sem separar por escolaridade)
+razao_total <- base |>
+  group_by(municipio, raca) |>
+  summarise(mediana = median(rem_sm), .groups = "drop") |>
+  pivot_wider(names_from = raca, values_from = mediana) |>
+  mutate(escolaridade = "Todos os níveis juntos")
+
+razao <- bind_rows(razao_nivel, razao_total) |>
+  mutate(razao = Negros / Brancos) |>
+  select(municipio, escolaridade, Brancos, Negros, razao) |>
+  arrange(municipio, escolaridade)
+
+kable(
+  razao,
+  col.names = c("Município", "Escolaridade", "Mediana brancos (SM)",
+                "Mediana negros (SM)", "Razão negros/brancos"),
+  digits = c(0, 0, 2, 2, 3),
+  format.args = list(decimal.mark = ","),
+  align = c("l", "l", "r", "r", "r"),
+  caption = "Tabela 4 – Razão entre as medianas de remuneração de negros e brancos. Fonte: RAIS 2025 (MTE). Elaboração própria."
+)
+```
+
+Dentro do mesmo nível de escolaridade, a mediana dos negros equivale a 94,4% (até médio) e 71,7% (superior) da dos brancos em São Paulo, e a 95,9% e 86,9% em Guarulhos. A diferença é pequena no até médio, aumenta no superior e é maior em São Paulo do que em Guarulhos. Sem separar por escolaridade, a razão é de 0,845 em São Paulo e 0,934 em Guarulhos. Esse número mistura a diferença dentro de cada nível com a composição: os negros estão mais presentes no grupo de menor escolaridade, que tem remunerações menores. Os valores não controlam setor, ocupação, porte do estabelecimento ou experiência e, por isso, não indicam discriminação.
+
+## Gráfico 1: remuneração mediana por raça/cor e escolaridade
+
+```{r grafico-1, fig.width = 9, fig.height = 5, fig.cap="Gráfico 1 – Remuneração mediana por raça/cor e escolaridade. Fonte: RAIS 2025 (MTE). Elaboração própria."}
+g1 <- ggplot(tabela_desc, aes(x = escolaridade, y = mediana, fill = raca)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(aes(ymin = p25, ymax = p75),
+                position = position_dodge(width = 0.9),
+                width = 0.2) +
+  facet_wrap(~ municipio) +
+  theme_minimal() +
+  labs(
+    title = "Remuneração mediana por raça/cor e escolaridade",
+    x = "Escolaridade",
+    y = "Remuneração mediana (salários mínimos)",
+    fill = "Raça/cor",
+    caption = "Fonte: RAIS 2025 (MTE). Elaboração própria."
+  )
+
+g1
+```
+
+No até ensino médio completo, as medianas de brancos e negros são próximas e os intervalos entre P25 e P75 se sobrepõem em grande parte. No superior completo, a mediana dos negros é menor nos dois municípios e os intervalos são bem mais largos, principalmente em São Paulo, o que mostra maior heterogeneidade de remuneração nesse nível.
+
+## Gráfico 2: distribuição da remuneração
+
+```{r grafico-2, fig.width = 9, fig.height = 5, fig.cap="Gráfico 2 – Distribuição da remuneração por raça/cor e escolaridade. Fonte: RAIS 2025 (MTE). Elaboração própria."}
+g2 <- ggplot(base, aes(x = escolaridade, y = rem_sm, fill = raca)) +
+  geom_boxplot(outlier.shape = NA) +
+# A escala logarítmica facilita a visualização de valores muito diferentes.
+  scale_y_log10() +
+  facet_wrap(~ municipio) +
+  theme_minimal() +
+  labs(
+    title = "Distribuição da remuneração por raça/cor e escolaridade",
+    x = "Escolaridade",
+    y = "Remuneração (salários mínimos)",
+    fill = "Raça/cor",
+    caption = "Fonte: RAIS 2025 (MTE). Elaboração própria."
+  )
+
+g2
+```
+
+Em escala logarítmica, as distribuições de brancos e negros se sobrepõem bastante, e a diferença aparece sobretudo na parte alta da distribuição do superior completo, em que a caixa e o bigode superior dos brancos se estendem mais, em especial em São Paulo. No até médio completo as caixas são estreitas e semelhantes. Os pontos extremos foram omitidos do gráfico, mas fazem parte dos cálculos das tabelas.
+
+**Por que usar escala logarítmica?** A remuneração apresenta assimetria à direita: há muitos vínculos com remunerações menores e poucos com valores muito altos. Na escala linear, esses valores altos comprimem visualmente as caixas dos demais grupos. A escala logarítmica facilita a comparação das distribuições. Ela altera apenas a apresentação do eixo do gráfico, não os valores usados nas tabelas ou nos cálculos.
+
+## Síntese dos resultados
+
+- **Composição:** negros são maioria no grupo de até ensino médio completo e minoria no de superior completo, com menor participação em São Paulo (35,4%) do que em Guarulhos (43,5%) nesse último.
+- **Diferença por raça/cor:** pequena no até médio e maior no superior completo, e maior em São Paulo do que em Guarulhos (razão das medianas de 0,717 contra 0,869).
+- **Forma da distribuição:** assimétrica à direita, mais intensamente no superior completo, o que justifica o uso da mediana e de medidas de dispersão além da média.
+- **Cuidado de leitura:** as diferenças são descritivas. Não foram controlados setor, ocupação, porte, idade ou experiência, e as categorias de escolaridade são amplas (o superior completo inclui mestrado e doutorado).
+
+## Curva de Lorenz e Índice de Gini
+
+A Curva de Lorenz mostra como a remuneração total está distribuída entre os vínculos. Primeiro, organizamos os vínculos do menor para o maior valor de remuneração. Depois, calculamos a proporção acumulada dos vínculos e da remuneração. Quanto mais distante a curva estiver da linha de igualdade, maior é a concentração da remuneração.
+
+```{r lorenz}
+# Organiza as remunerações do menor para o maior dentro de cada município.
+lorenz <- base |>
+  arrange(municipio, rem_sm) |>
+  group_by(municipio) |>
+  mutate(
+    proporcao_vinculos = row_number() / n(),
+    proporcao_remuneracao = cumsum(rem_sm) / sum(rem_sm)
+  ) |>
+  ungroup()
+
+# Inclui o ponto inicial (0%, 0%) de cada curva.
+inicio_lorenz <- tibble(
+  municipio = levels(base$municipio),
+  proporcao_vinculos = 0,
+  proporcao_remuneracao = 0
+)
+
+lorenz <- bind_rows(inicio_lorenz, lorenz)
+
+ggplot(lorenz, aes(x = proporcao_vinculos, y = proporcao_remuneracao, color = municipio)) +
+  geom_line() +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  scale_x_continuous(labels = function(x) paste0(x * 100, "%")) +
+  scale_y_continuous(labels = function(x) paste0(x * 100, "%")) +
+  coord_equal() +
+  theme_minimal() +
+  labs(
+    title = "Curva de Lorenz da remuneração",
+    x = "Proporção acumulada dos vínculos",
+    y = "Proporção acumulada da remuneração",
+    color = "Município",
+    caption = "Gráfico 3. Fonte: RAIS 2025 (MTE). Elaboração própria. Linha tracejada: igualdade perfeita."
+  )
+```
+
+O Índice de Gini resume a concentração da remuneração em um número entre 0 e 1. Quanto mais próximo de zero, mais igualitária é a distribuição; quanto mais próximo de um, maior é a concentração. O cálculo abaixo utiliza uma fórmula baseada na posição de cada remuneração depois de ordenar os valores.
+
+```{r gini}
+# Função para calcular o Gini de um grupo.
+calcular_gini <- function(valores) {
+  valores <- sort(valores)
+  n <- length(valores)
+  soma <- sum(valores)
+
+  if (n == 0 || soma == 0) {
+    return(NA)
+  }
+
+  posicao <- 1:n
+  gini <- (2 * sum(posicao * valores) / (n * soma)) - (n + 1) / n
+  return(gini)
+}
+
+# Calcula o Gini para cada município, escolaridade e grupo racial.
+gini_grupos <- base |>
+  group_by(municipio, escolaridade, raca) |>
+  summarise(
+    vinculos = n(),
+    gini = calcular_gini(rem_sm),
+    .groups = "drop"
+  )
+
+# Calcula também o Gini geral de cada município.
+gini_municipios <- base |>
+  group_by(municipio) |>
+  summarise(
+    escolaridade = "Todos os níveis",
+    raca = "Todos os grupos",
+    vinculos = n(),
+    gini = calcular_gini(rem_sm),
+    .groups = "drop"
+  )
+
+# Junta os resultados gerais e os resultados por grupo.
+tabela_gini <- bind_rows(gini_municipios, gini_grupos) |>
+  arrange(municipio, escolaridade, raca)
+
+kable(
+  tabela_gini,
+  col.names = c("Município", "Escolaridade", "Raça/cor", "Vínculos", "Gini"),
+  digits = c(0, 0, 0, 0, 3),
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("l", "l", "l", "r", "r"),
+  caption = "Tabela 5 – Índice de Gini da remuneração por município, escolaridade e raça/cor. Fonte: RAIS 2025 (MTE). Elaboração própria."
+)
+```
+
+
+## Interpretação dos Resultados, Diagnóstico e Recomendação Preliminar
+
+Os resultados da RAIS 2025 para jornadas de 44 horas semanais ou mais acompanham o padrão já identificado pelo IBGE (2022): a diferença de remuneração entre brancos e negros permanece mesmo dentro do mesmo nível de escolaridade. Na base analisada, essa diferença é pequena entre trabalhadores com até o ensino médio completo (razão entre medianas de 0,944 em São Paulo e 0,959 em Guarulhos), mas aumenta de forma clara no ensino superior completo, sobretudo na capital (São Paulo), onde a mediana dos trabalhadores negros (3,01 SM) corresponde a 71,7% da dos brancos (4,20 SM). A diferença também cresce ao longo da distribuição: no superior completo, a razão negros/brancos é de 0,794 no P25 e de 0,622 no P75 em São Paulo (0,934 e 0,796 em Guarulhos).
+
+A comparação entre os dois municípios também reflete as diferenças de perfil econômico apontadas pela Fundação SEADE (2022). Em São Paulo, onde comércio e serviços respondem por 83,2% do Valor Adicionado Bruto, os rendimentos do ensino superior são mais elevados e mais dispersos, o que se expressa no Índice de Gini geral de 0,429 e no desvio-padrão de 8,28 SM entre brancos com superior completo. A Curva de Lorenz mostra que a distribuição de Guarulhos fica acima da de São Paulo em todo o intervalo, sem cruzamento. No grupo até médio completo o Gini é próximo nos dois municípios (0,235 a 0,261); a diferença vem do superior completo, que reúne 23,3% dos vínculos e 48,9% da massa salarial em São Paulo, contra 15,1% e 25,5% em Guarulhos. Em Guarulhos, onde a indústria tem peso maior (27% do VAB, contra 9,5% na capital), a distribuição salarial é mais concentrada na faixa intermediária, com Gini geral de 0,304 e menor distância entre as medianas de brancos e negros no ensino superior (razão de 0,869).
+
+Quando esses resultados são condicionados à luz do debate sobre a redução da jornada constitucional para 40 horas semanais sem corte salarial e o fim da escala 6x1, observa-se que o recorte de 44 horas ou mais atinge majoritariamente trabalhadores negros e com até o ensino médio completo (58,1% em São Paulo e 57,7% em Guarulhos), justamente os grupos com menor remuneração mediana (entre 1,53 e 1,71 SM). Embora a RAIS não permita estipular o efeito econômico da alteração legislativa, a composição dos vínculos indica que a mudança incide diretamente sobre a base salarial do emprego formal nos dois municípios.
+
+### Diagnóstico
+
+- **Perfil da faixa de 44 horas ou mais:** A maior parte dos vínculos nessa jornada concentra-se no nível de até ensino médio completo, no qual trabalhadores negros são maioria nos dois municípios e recebem as menores medianas da amostra.
+- **Desigualdade no ensino superior:** No superior completo, os trabalhadores negros são minoria (35,4% em São Paulo e 43,5% em Guarulhos) e apresentam medianas inferiores às dos trabalhadores brancos, com desigualdade mais acentuada na capital. Os negros são 52,8% dos vínculos de São Paulo e ficam com 41,2% da massa salarial (55,6% e 51,3% em Guarulhos).
+- **Diferença entre os municípios:** A concentração de renda e o hiato salarial por raça/cor são maiores em São Paulo do que em Guarulhos, acompanhando a diferença entre uma economia mais voltada a serviços e outra com maior intensidade industrial. Em Guarulhos o nível salarial é mais baixo no topo (mediana dos brancos com superior de 2,89 SM, contra 4,20 em São Paulo) e seu hiato é menor.
+- **Dois canais do hiato, acesso e retorno:** 32,0% dos brancos de São Paulo com vínculo de 44 horas ou mais têm superior completo, contra 15,6% dos negros (19,2% e 11,8% em Guarulhos), o que indica diferença de acesso. Com o mesmo nível, a mediana dos negros equivale a 71,7% da dos brancos em São Paulo e a 86,9% em Guarulhos, o que indica diferença de retorno.
+
+### Recomendação preliminar
+
+A partir desse diagnóstico descritivo, e considerando as diretrizes do Pacto pela Igualdade Racial (BRASIL, 2024), quatro tópicos de política pública mostram-se pertinentes:
+
+- **Acompanhamento da transição de jornada nos setores de menor remuneração:** Caso avance a redução da jornada máxima para 40 horas semanais sem redução salarial, a fiscalização trabalhista deve priorizar os setores intensivos em mão de obra de até ensino médio completo, evitando que a adaptação dos contratos resulte em perda de renda real para a parcela majoritariamente negra que ocupa esses postos.
+- **Medidas de equidade salarial no ensino superior:** Como a disparidade entre brancos e negros na jornada de 44 horas ou mais concentra-se nos vínculos de nível superior, a política de regulação da jornada ganha alcance distributivo se combinada a mecanismos de transparência salarial e promoção profissional voltados à redução das diferenças de remuneração dentro das empresas. O hiato do superior tem dois componentes: acesso (32,0% dos brancos de São Paulo têm superior completo, contra 15,6% dos negros) e retorno (com o mesmo nível, a mediana dos negros é 71,7% da dos brancos). A transparência e a promoção atuam sobre o retorno; qualificação e entrada em ocupações de maior remuneração atuam sobre o acesso.
+- **Prioridades distintas por município:** em São Paulo, onde a concentração é maior (Gini de 0,429), a prioridade é a equidade salarial e a promoção no superior. Em Guarulhos, onde o hiato é menor (razão de 0,869), a prioridade é ampliar o acesso a vagas de maior valor agregado, já que o prêmio do superior sobre o até médio é menor (1,5 a 1,7 vez, contra 2,0 a 2,6 em São Paulo).
+- **Monitoramento anual:** recomenda-se que o poder público repita, a cada nova edição da base, quatro indicadores para São Paulo e Guarulhos, de modo a verificar se a situação diagnosticada se altera e a embasar eventuais ajustes. O Gini mostra se a desigualdade aumenta ou diminui. A razão negros/brancos mostra em que ponto da escala o hiato cresce. O hiato entre a participação dos negros nos vínculos e na massa salarial. O salário-hora verifica se uma eventual redução de jornada elevou o valor da hora na proporção esperada (10%, de 44 para 40 horas).
+
+
+# Limites e Ressalvas
+
+**O que a RAIS 2025 não mede**
+
+- **Universo exclusivamente formal:** os dados da RAIS capturam apenas os vínculos empregatícios formais declarados. Não representam a totalidade do mercado de trabalho brasileiro, uma vez que o setor informal, o desemprego e as pessoas fora da força de trabalho não constam na base.
+- **Proxy de jornada:** a variável de 44 horas semanais opera como aproximação da escala 6x1, não sendo possível identificar o arranjo exato dos dias trabalhados na base pública.
+- **Local de trabalho:** o município é o do estabelecimento, e não o de moradia do trabalhador. Os resultados descrevem vínculos de empresas localizadas em cada município, e não a população residente.
+
+**Decisões de limpeza que afetam os resultados**
+
+- **Código 99 de jornada:** os 232.337 vínculos com esse valor foram excluídos como jornada não mensurável. Eles têm perfil diferente dos demais (mais escolarizados e com remuneração mais alta), e sua exclusão reduz a diferença entre brancos e negros no superior completo (Apêndice A.4).
+- **Remuneração zero:** os 315.238 vínculos com remuneração média anual igual a zero foram excluídos. A taxa de zeros é maior entre os de menor escolaridade e em São Paulo (Apêndice A.5).
+- **Raça/cor e escolaridade:** indígenas, amarelos e raça/cor não identificada, bem como o superior incompleto, ficam fora da comparação (Apêndice A.3).
+- **Remuneração média do ano:** a variável usada é a média do ano, que pode refletir vínculos que existiram só parte do período. A remuneração de dezembro não foi usada.
+
+**Caráter descritivo e o que o trabalho não afirma**
+
+- A análise estabelece associações e diagnósticos distributivos no mercado formal, não devendo ser interpretada como inferência causal direta.
+- Não afirma que a emenda reduzirá ou ampliará desigualdades, nem que diferenças entre grupos decorrem de discriminação.
+- Não afirma que jornada de 44 horas equivale à escala 6x1.
+- Não generaliza para o mercado de trabalho informal nem para outros municípios.
+
+# Apêndice A – Transparência metodológica
+
+## A.1 Fonte e procedimento
+
+- **Fonte:** microdados públicos da RAIS 2025 (vínculos), arquivo do estado de São Paulo (`RAIS_VINC_PUB_SP`), do Ministério do Trabalho e Emprego.
+- **Procedimento:** o arquivo foi lido em blocos de 100 mil linhas para reduzir o uso de memória, com filtros aplicados em sequência. O script de filtragem gerou a base analítica (`rais_sp_guarulhos_analise.csv`) e um relatório automático com as contagens (`relatorio_filtragem_rais.txt`).
+- **Unidade de análise:** vínculo formal ativo em 31/12/2025.
+- **Município:** variável `Município - Code` do estabelecimento, conforme o layout da RAIS (o layout também traz `Município Trab - Código`, não usado).
+- **Linhas idênticas:** a RAIS pública não tem identificador do trabalhador, e a base tem poucas colunas, de modo que linhas idênticas podem ser vínculos distintos. Elas não foram removidas.
+
+## A.2 Número de vínculos em cada etapa
+
+```{r etapas}
+etapas <- tibble(
+  etapa = c(
+    "Registros do arquivo do estado de SP",
+    "São Paulo e Guarulhos (município do estabelecimento)",
+    "Vínculo ativo em 31/12",
+    "Jornada contratual de 44 horas ou mais",
+    "Jornada diferente do código 99",
+    "Remuneração média maior que zero",
+    "Raça/cor: brancos e negros",
+    "Escolaridade: até médio completo ou superior completo (amostra final)"
+  ),
+  restantes = c(25497764, 9414844, 5965279, 3736582, 3504245, 3189007, 3094870, 3000716)
+) |>
+  mutate(
+    excluidos    = lag(restantes) - restantes, perc_mantido = 100 * restantes / lag(restantes))
+
+kable(
+  etapas,
+  col.names = c("Etapa", "Vínculos restantes", "Excluídos na etapa", "% mantido"),
+  digits = c(0, 0, 0, 1),
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("l", "r", "r", "r"),
+  caption = "Tabela 6 – Número de vínculos em cada etapa da filtragem. Fonte: relatório de filtragem da RAIS 2025. Elaboração própria."
+)
+```
+
+Fonte: relatório de filtragem (`relatorio_filtragem_rais.txt`). A etapa "Jornada contratual de 44 horas ou mais" inclui os vínculos de código 99, retirados na etapa seguinte.
+
+## A.3 Grupos e códigos excluídos {-}
+
+**Definição dos grupos.** Brancos (código 2) e Negros (pretos, código 4, e pardos, código 8). Escolaridade: "até ensino médio completo" (códigos 1 a 7) e "ensino superior completo" (códigos 9 a 11, incluindo mestrado e doutorado). A distribuição dos códigos abaixo refere-se aos 3.504.245 vínculos anteriores às exclusões por remuneração, raça/cor e escolaridade.
+
+```{r codigos}
+raca_codigos <- tribble(
+  ~codigo, ~categoria,            ~vinculos, ~destino,
+  "1",     "Indígena",                 7658, "Fora da comparação",
+  "2",     "Branca",                1604670, "Brancos",
+  "4",     "Preta",                  320727, "Negros",
+  "6",     "Amarela",                 40313, "Fora da comparação",
+  "8",     "Parda",                 1470569, "Negros",
+  "9",     "Não identificada",        60308, "Fora da comparação"
+) |>
+  mutate(perc = 100 * vinculos / sum(vinculos))
+
+kable(
+  raca_codigos,
+  col.names = c("Código", "Raça/cor", "Vínculos", "Destino", "%"),
+  digits = c(0, 0, 0, 0, 1),
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("l", "l", "r", "l", "r"),
+  caption = "Tabela 7 – Distribuição dos vínculos por códigos de raça/cor, antes das exclusões. Fonte: RAIS 2025 (MTE). Elaboração própria."
+)
+
+escolaridade_codigos <- tribble(
+  ~codigo, ~categoria,                  ~vinculos, ~destino,
+  "1",     "Analfabeto",                    13331, "Até médio completo",
+  "2",     "Até 5ª série incompleta",       56465, "Até médio completo",
+  "3",     "5ª série completa (fund.)",     45844, "Até médio completo",
+  "4",     "6ª a 9ª série (fund.)",        119046, "Até médio completo",
+  "5",     "Fundamental completo",         241433, "Até médio completo",
+  "6",     "Médio incompleto",             186569, "Até médio completo",
+  "7",     "Médio completo",              2006274, "Até médio completo",
+  "8",     "Superior incompleto",          102643, "Fora da comparação",
+  "9",     "Superior completo",            721722, "Superior completo",
+  "10",    "Mestrado",                       7911, "Superior completo",
+  "11",    "Doutorado",                      3007, "Superior completo"
+) |>
+  mutate(perc = 100 * vinculos / sum(vinculos))
+
+kable(
+  escolaridade_codigos,
+  col.names = c("Código", "Escolaridade", "Vínculos", "Destino", "%"),
+  digits = c(0, 0, 0, 0, 1),
+  format.args = list(big.mark = ".", decimal.mark = ","),
+  align = c("l", "l", "r", "l", "r"),
+  caption = "Tabela 8 – Distribuição dos vínculos por códigos de escolaridade, antes das exclusões. Fonte: RAIS 2025 (MTE). Elaboração própria."
+)
+```
+
+## A.4 Jornada e o código 99 {-}
+
+O campo de horas contratuais semanais possui duas posições, de modo que 99 é o maior valor possível. Entretanto, a base não apresenta jornadas entre 61 e 98 horas, sendo 60 horas a maior jornada observada, desconsiderando o código 99. Embora esse código apareça no layout da RAIS como "não classificado" em outra variável (faixa de remuneração de dezembro), não localizamos uma definição oficial específica para seu uso na variável de jornada contratual.
+
+Diante dessa incerteza, os 232.337 vínculos com valor 99 foram tratados como jornadas não mensuráveis e excluídos da análise. Essa decisão, contudo, não é neutra, os vínculos com esse código apresentam remuneração mediana superior à dos demais e maior concentração entre trabalhadores com ensino superior completo. Portanto, sua exclusão pode influenciar os resultados das comparações salariais.
+
+## A.5 Remuneração igual a zero {-}
+
+Foram excluídos 315.238 vínculos (9,0% daqueles que permaneceram após o filtro de jornada) com remuneração média anual igual a zero, pois esse valor não permite analisar adequadamente a remuneração dos vínculos. A documentação consultada não esclarece o significado específico desse registro.
+
+# Fontes
+
+**Dados:** microdados da RAIS 2025 (vínculos), Ministério do Trabalho e Emprego (MTE).
+
+**Referências:**
+
+BBC NEWS BRASIL. O que Flávio e Lula propõem sobre a escala 6x1. BBC News Brasil, 7 out. 2026. Disponível em: <https://www.bbc.com/portuguese/articles/c34g1vgly2deo>.
+
+BRASIL. [Constituição (1988)]. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República. Disponível em: <https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm>.
+
+BRASIL. Ministério da Igualdade Racial. Pacto pela Igualdade Racial. Brasília, DF: Ministério da Igualdade Racial, 2024. Disponível em: <https://www.gov.br/igualdaderacial/pt-br/acesso-a-informacao/acoes-e-programas-1/PactopelaIgualdadeRacial_v.final_revisto101220242.pdf>.
+
+BRASIL. Ministério do Trabalho e Emprego. RAIS: layout dos microdados de vínculos (arquivo RAIS_vinculos_layout2020.xls). [Brasília, DF]: MTE, 2020. Material fornecido na disciplina.
+
+BRASIL. Tribunal Superior Eleitoral. Diretrizes do programa de governo de coligação: Eleições Gerais 2026. Divulgação de Candidaturas e Contas Eleitorais (DivulgaCandContas). Brasília, DF: TSE, [2026].
+
+FUNDAÇÃO SISTEMA ESTADUAL DE ANÁLISE DE DADOS (SEADE). Seade PIB Municipal: Produto Interno Bruto dos Municípios Paulistas. São Paulo: Fundação SEADE. Disponível em: <https://pib.seade.gov.br/municipal/>.
+
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Desigualdades sociais por cor ou raça no Brasil. Estudos e pesquisas: informação demográfica e socioeconômica. Rio de Janeiro: IBGE, 2022. Disponível em: <https://www.ibge.gov.br/estatisticas/sociais/populacao/25844-desigualdades-sociais-por-cor-ou-raca.html>.
+
+# Declaração do Uso de IA
+
+**Declaração de Uso Ético de Inteligência Artificial**
+
+Em atendimento às diretrizes da disciplina:
+
+**Ferramentas utilizadas:** Gemini (Google), Claude (Anthropic) e ChatGPT (OpenAI).
+
+**Modo de utilização:** Gemini: auxílio na formatação e organização do documento R Markdown conforme o plano de análise (Etapa 2), refino gramatical do texto e estruturação dos recortes metodológicos. Claude: apoio na revisão e organização do texto, na redação das seções de contexto e de limites da análise e na estruturação do código em R da análise exploratória. ChatGPT: apoio na simplificação e revisão dos códigos em R para a construção das tabelas, da Curva de Lorenz e do Índice de Gini, além de sugestões de organização e explicação dos resultados.
+
+**Autonomia e Validação:** todo o enquadramento teórico, a escolha das variáveis da RAIS e os conceitos econômicos foram validados e definidos pelos integrantes do grupo.
